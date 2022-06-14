@@ -29,7 +29,6 @@ import android.widget.RemoteViews;
 import android.widget.Toast;
 
 import com.example.myapplication.DataBase.DataBaseHelper;
-import com.example.myapplication.Notification.NotificationIntentService;
 import com.example.myapplication.blut.BtConnect;
 
 import java.text.SimpleDateFormat;
@@ -279,24 +278,22 @@ public class MainActivity extends AppCompatActivity {
         RemoteViews remoteViews = new RemoteViews(getPackageName(),R.layout.notification);
         NotificationManager notificationManager =(NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
-
-        Intent A_Intent = new Intent(this, NotificationIntentService.class);
+        Intent A_Intent = new Intent(this, MyIntentService.class);
         A_Intent.setAction("A_button");
         remoteViews.setOnClickPendingIntent(R.id.buttonA, PendingIntent.getService(this,0,A_Intent,PendingIntent.FLAG_IMMUTABLE));
 
-        Intent B_Inent = new Intent(this, NotificationIntentService.class);
+        Intent B_Inent = new Intent(this, MyIntentService.class);
         B_Inent.setAction("B_button");
         remoteViews.setOnClickPendingIntent(R.id.buttonB, PendingIntent.getService(this,1,B_Inent,PendingIntent.FLAG_IMMUTABLE));
 
-        Intent C_Inent = new Intent(this, NotificationIntentService.class);
+        Intent C_Inent = new Intent(this, MyIntentService.class);
         C_Inent.setAction("C_button");
         remoteViews.setOnClickPendingIntent(R.id.buttonC, PendingIntent.getService(this,2,C_Inent,PendingIntent.FLAG_IMMUTABLE));
 
-        Intent D_Inent = new Intent(this, NotificationIntentService.class);
+        Intent D_Inent = new Intent(this, MyIntentService.class);
         D_Inent.setAction("D_button");
         remoteViews.setOnClickPendingIntent(R.id.buttonD,
                 PendingIntent.getService(this,3,D_Inent,PendingIntent.FLAG_IMMUTABLE));
-
 
 
         NotificationCompat.Builder builder= new NotificationCompat.Builder(this,CHANNEL_ID).
