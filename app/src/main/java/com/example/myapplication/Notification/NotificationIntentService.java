@@ -2,17 +2,16 @@ package com.example.myapplication.Notification;
 
 import android.app.IntentService;
 import android.content.Intent;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
-import com.example.myapplication.adapter.BtCONST;
-import com.example.myapplication.blut.BtConnect;
+import com.example.myapplication.AppConstants;
+import com.example.myapplication.blut.BluetoothConnectionHelper;
 
 
 public class NotificationIntentService extends IntentService {
 
-    private BtConnect btConnect;
+    private BluetoothConnectionHelper btConnect;
     public NotificationIntentService() {
         super("NotificationIntent_Service");
 
@@ -20,29 +19,30 @@ public class NotificationIntentService extends IntentService {
 
     @Override
     public void onHandleIntent(@Nullable Intent intent) {
-        String mac = this.getSharedPreferences(BtCONST.MY_PREF, MODE_PRIVATE).getString(BtCONST.MAC_KEY, "");
+        String mac = this.getSharedPreferences(AppConstants.MY_PREF, MODE_PRIVATE).getString(AppConstants.MAC_KEY, "");
         System.out.println(mac);
-        btConnect = new BtConnect(mac);
-        btConnect.connecting(new Runnable() {
+        btConnect = new BluetoothConnectionHelper(mac);
+        btConnect.connect(new Runnable() {
             @Override
             public void run() {
 
                 switch (intent.getAction()) {
                     case "A_button":
                         btConnect.sendMess("A");
-                        btConnect.getConnectThread().closeConnection();
+
+                        btConnect.getConnectionThread().closeConnection();
                         break;
                     case "B_button":
                         btConnect.sendMess("B");
-                        btConnect.getConnectThread().closeConnection();
+                        btConnect.getConnectionThread().closeConnection();
                         break;
                     case "C_button":
                         btConnect.sendMess("C");
-                        btConnect.getConnectThread().closeConnection();
+                        btConnect.getConnectionThread().closeConnection();
                         break;
                     case "D_button":
                         btConnect.sendMess("D");
-                        btConnect.getConnectThread().closeConnection();
+                        btConnect.getConnectionThread().closeConnection();
                         break;
                 }
             }

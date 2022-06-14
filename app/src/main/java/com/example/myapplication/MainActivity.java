@@ -28,8 +28,10 @@ import android.widget.ImageView;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
-import com.example.myapplication.DataBase.DataBaseHelper;
-import com.example.myapplication.blut.BtConnect;
+import com.example.myapplication.domain.Event;
+import com.example.myapplication.sqlite.DataBaseHelper;
+import com.example.myapplication.domain.rest.LibApiVolley;
+import com.example.myapplication.blut.BluetoothConnectionHelper;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -39,13 +41,16 @@ public class MainActivity extends AppCompatActivity {
     private MenuItem menuItem, connectStatus;
     private BluetoothAdapter BTadapter;
     private final int REQUEST_BL = 15;
-    private BtConnect bTconnect;
+    private BluetoothConnectionHelper bTconnect;
     private Button bA, bB, bC, bD, button;
     private ActionBar actionBar;
     private SimpleDateFormat simpleDateFormat;
     private String dataTime;
     private DataBaseHelper dataBaseHelper;
-    public ImageView carView;
+    private ImageView carView;
+    private int user_id = 0;
+    private LibApiVolley libApiVolley;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +62,6 @@ public class MainActivity extends AppCompatActivity {
         filter.addAction(BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED);
         registerReceiver(mReceiver, filter);
         setContentView(R.layout.activity_main);
-
 
         init();
         View.OnTouchListener touchListener = new View.OnTouchListener() {
@@ -73,22 +77,24 @@ public class MainActivity extends AppCompatActivity {
                         switch (view.getId()) {
                             case (R.id.ButA):
                                 bTconnect.sendMess("A");
-                                dataBaseHelper.addDataBase("Send A",getTime());
                                 Log.d("MyLog", "Send A");
+                                libApiVolley.addEvent(new Event(user_id, "0",Time.getTime()));
                                 break;
                             case (R.id.ButB):
                                 bTconnect.sendMess("B");
-                                dataBaseHelper.addDataBase("Send B",getTime());
+                                libApiVolley.addEvent(new Event(user_id, "1",Time.getTime()));
+
                                 Log.d("MyLog", "Send B");
                                 break;
                             case (R.id.ButC):
                                 bTconnect.sendMess("C");
-                                dataBaseHelper.addDataBase("Send C",getTime());
+                                libApiVolley.addEvent(new Event(user_id, "2",Time.getTime()));
+
                                 Log.d("MyLog", "Send C");
                                 break;
                             case (R.id.ButD):
                                 bTconnect.sendMess("D");
-                                dataBaseHelper.addDataBase("Send D",getTime());
+                                libApiVolley.addEvent(new Event(user_id, "3",Time.getTime()));
                                 Log.d("MyLog", "Send D");
                                 break;
                         }
@@ -99,7 +105,6 @@ public class MainActivity extends AppCompatActivity {
                             case (R.id.ButA):
                                 bTconnect.sendMess("a");
                                 Log.d("MyLog", "Send a");
-
                                 break;
                             case (R.id.ButB):
                                 bTconnect.sendMess("b");
@@ -157,18 +162,12 @@ public class MainActivity extends AppCompatActivity {
     };
 
 
-    private String getTime(){
-        dataTime = (simpleDateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss")).format(Calendar.getInstance().getTime());
-        return dataTime;
-    }
-
-
     @Override
     protected void onStart() {
         super.onStart();
         AppStatus.openStatus = true;
         if(AppStatus.connectStatus==false){
-            bTconnect.connecting(null);
+            bTconnect.connect(null);
         }
         notificationManager();
     }
@@ -194,7 +193,7 @@ public class MainActivity extends AppCompatActivity {
             }
         } else if (item.getItemId()==R.id.bt_menu){
             if (BTadapter.isEnabled()){
-                Intent intent =  new Intent(MainActivity.this, Bt2.class);
+                Intent intent =  new Intent(MainActivity.this, DeviceSearchActivity.class);
                 startActivity(intent);
             } else {
                 Toast.makeText(this, "Включи Bluetooth", Toast.LENGTH_SHORT).show();
@@ -203,7 +202,7 @@ public class MainActivity extends AppCompatActivity {
             if (!BTadapter.isEnabled()){
                 enableBt();
             } else {
-                bTconnect.connecting(null);
+                bTconnect.connect(null);
             }
         } else if (item.getItemId()==R.id.Event_Log){
             Intent intent = new Intent(MainActivity.this, EventLogAct.class);
@@ -233,9 +232,9 @@ public class MainActivity extends AppCompatActivity {
     private void init(){
         dataBaseHelper = new DataBaseHelper(MainActivity.this);
         BTadapter = BluetoothAdapter.getDefaultAdapter();
-        bTconnect = new BtConnect(this);
+        bTconnect = new BluetoothConnectionHelper(this);
         actionBar = getSupportActionBar();
-
+        libApiVolley = new LibApiVolley(this);
 
         bA = findViewById(R.id.ButA);
         bB = findViewById(R.id.ButB);
@@ -246,7 +245,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (!AppStatus.connectStatus)
-                    bTconnect.connecting(null);
+                    bTconnect.connect(null);
             }
         });
 
@@ -271,7 +270,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        if (AppStatus.connectStatus)bTconnect.getConnectThread().closeConnection();
+        if (AppStatus.connectStatus)bTconnect.getConnectionThread().closeConnection();
     }
 
     public void notificationManager(){
@@ -297,7 +296,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         NotificationCompat.Builder builder= new NotificationCompat.Builder(this,CHANNEL_ID).
-                setContent(remoteViews).setSmallIcon(R.drawable.ic_circle_green).setContentTitle("SYNC");
+                setContent(remoteViews).setSmallIcon(R.drawable.ic____________1).setContentTitle("SYNC");
         createChannelIfNeeded(notificationManager);
         notificationManager.notify(null,125,builder.build());
     }
@@ -307,4 +306,6 @@ public class MainActivity extends AppCompatActivity {
             manager.createNotificationChannel(notificationChannel);
         }
     }
+
+
 }

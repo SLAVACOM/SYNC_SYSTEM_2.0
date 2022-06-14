@@ -2,13 +2,13 @@ package com.example.myapplication;
 
 import android.app.IntentService;
 import android.content.Intent;
-import android.content.Context;
 
-import com.example.myapplication.adapter.BtCONST;
-import com.example.myapplication.blut.BtConnect;
+import com.example.myapplication.blut.BluetoothConnectionHelper;
+import com.example.myapplication.domain.Event;
+import com.example.myapplication.domain.rest.LibApiVolley;
 
 public class MyIntentService extends IntentService {
-    private BtConnect btConnect;
+    private BluetoothConnectionHelper btConnect;
 
 
     public MyIntentService() {
@@ -16,33 +16,39 @@ public class MyIntentService extends IntentService {
     }
     @Override
     protected void onHandleIntent(Intent intent) {
-        String mac = this.getSharedPreferences(BtCONST.MY_PREF, MODE_PRIVATE).getString(BtCONST.MAC_KEY, "");
+        LibApiVolley libApiVolley = new LibApiVolley(this);
+        String mac = this.getSharedPreferences(AppConstants.MY_PREF, MODE_PRIVATE).getString(AppConstants.MAC_KEY, "");
+        int user_id = 0 ;
         System.out.println(mac);
-        btConnect = new BtConnect(mac);
-        btConnect.connecting(new Runnable() {
+        btConnect = new BluetoothConnectionHelper(mac);
+        btConnect.connect(new Runnable() {
             @Override
             public void run() {
 
                 switch (intent.getAction()) {
                     case "A_button":
                         btConnect.sendMess("A");
+                        libApiVolley.addEvent(new Event(user_id,"0",Time.getTime()));
                         btConnect.sendMess("a");
-                        btConnect.getConnectThread().closeConnection();
+                        btConnect.getConnectionThread().closeConnection();
                         break;
                     case "B_button":
                         btConnect.sendMess("B");
+                        libApiVolley.addEvent(new Event(user_id,"1",Time.getTime()));
                         btConnect.sendMess("b");
-                        btConnect.getConnectThread().closeConnection();
+                        btConnect.getConnectionThread().closeConnection();
                         break;
                     case "C_button":
                         btConnect.sendMess("C");
+                        libApiVolley.addEvent(new Event(user_id,"2",Time.getTime()));
                         btConnect.sendMess("c");
-                        btConnect.getConnectThread().closeConnection();
+                        btConnect.getConnectionThread().closeConnection();
                         break;
                     case "D_button":
                         btConnect.sendMess("D");
+                        libApiVolley.addEvent(new Event(user_id,"3",Time.getTime()));
                         btConnect.sendMess("d");
-                        btConnect.getConnectThread().closeConnection();
+                        btConnect.getConnectionThread().closeConnection();
                         break;
                 }
             }

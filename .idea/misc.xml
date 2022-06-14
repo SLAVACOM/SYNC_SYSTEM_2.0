@@ -4,12 +4,14 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/ProBook_24/AndroidStudioProjects/MyApplication29/app/src/main/res/drawable-v24/ic__23.xml" value="0.1645" />
+        <entry key="..\:/Users/ProBook_24/AndroidStudioProjects/MyApplication29/app/src/main/res/drawable-v24/ic__3.xml" value="0.18" />
         <entry key="..\:/Users/ProBook_24/AndroidStudioProjects/MyApplication29/app/src/main/res/drawable-v24/ic____________1.xml" value="0.1" />
         <entry key="..\:/Users/ProBook_24/AndroidStudioProjects/MyApplication29/app/src/main/res/drawable-v24/ic_baseline_bluetooth_24.xml" value="0.1" />
         <entry key="..\:/Users/ProBook_24/AndroidStudioProjects/MyApplication29/app/src/main/res/drawable-v24/ic_baseline_bluetooth_disabled_24.xml" value="0.1" />
         <entry key="..\:/Users/ProBook_24/AndroidStudioProjects/MyApplication29/app/src/main/res/drawable-v24/ic_baseline_menu_24.xml" value="0.1635" />
         <entry key="..\:/Users/ProBook_24/AndroidStudioProjects/MyApplication29/app/src/main/res/drawable-v24/ic_circle.xml" value="0.1635" />
         <entry key="..\:/Users/ProBook_24/AndroidStudioProjects/MyApplication29/app/src/main/res/drawable-v24/ic_circle_bt_l.xml" value="0.1635" />
+        <entry key="..\:/Users/ProBook_24/AndroidStudioProjects/MyApplication29/app/src/main/res/drawable-v24/ic_circle_bt_r.xml" value="0.1" />
         <entry key="..\:/Users/ProBook_24/AndroidStudioProjects/MyApplication29/app/src/main/res/drawable-v24/ic_circle_red.xml" value="0.1" />
         <entry key="..\:/Users/ProBook_24/AndroidStudioProjects/MyApplication29/app/src/main/res/drawable-v24/ic_compare.xml" value="0.1" />
         <entry key="..\:/Users/ProBook_24/AndroidStudioProjects/MyApplication29/app/src/main/res/drawable-v24/ic_launcher_background.xml" value="0.1" />
@@ -20,11 +22,12 @@
         <entry key="..\:/Users/ProBook_24/AndroidStudioProjects/MyApplication29/app/src/main/res/drawable/ic_launcher_background.xml" value="0.1" />
         <entry key="..\:/Users/ProBook_24/AndroidStudioProjects/MyApplication29/app/src/main/res/layout/activity_bt2.xml" value="0.358695652173913" />
         <entry key="..\:/Users/ProBook_24/AndroidStudioProjects/MyApplication29/app/src/main/res/layout/activity_event_log2.xml" value="0.1388888888888889" />
+        <entry key="..\:/Users/ProBook_24/AndroidStudioProjects/MyApplication29/app/src/main/res/layout/activity_login.xml" value="0.33" />
         <entry key="..\:/Users/ProBook_24/AndroidStudioProjects/MyApplication29/app/src/main/res/layout/activity_main.xml" value="0.25" />
         <entry key="..\:/Users/ProBook_24/AndroidStudioProjects/MyApplication29/app/src/main/res/layout/activity_start2.xml" value="0.14722222222222223" />
-        <entry key="..\:/Users/ProBook_24/AndroidStudioProjects/MyApplication29/app/src/main/res/layout/bt_list_title_tem.xml" value="0.1388888888888889" />
+        <entry key="..\:/Users/ProBook_24/AndroidStudioProjects/MyApplication29/app/src/main/res/layout/bt_list_title_tem.xml" value="0.67" />
         <entry key="..\:/Users/ProBook_24/AndroidStudioProjects/MyApplication29/app/src/main/res/layout/event_log_item.xml" value="0.67" />
-        <entry key="..\:/Users/ProBook_24/AndroidStudioProjects/MyApplication29/app/src/main/res/layout/notification.xml" value="0.5" />
+        <entry key="..\:/Users/ProBook_24/AndroidStudioProjects/MyApplication29/app/src/main/res/layout/notification.xml" value="0.25" />
         <entry key="..\:/Users/ProBook_24/AndroidStudioProjects/MyApplication29/app/src/main/res/menu/bt_menu.xml" value="0.38697916666666665" />
         <entry key="..\:/Users/ProBook_24/AndroidStudioProjects/MyApplication29/app/src/main/res/menu/log_menu.xml" value="0.21" />
         <entry key="..\:/Users/ProBook_24/AndroidStudioProjects/MyApplication29/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.1" />

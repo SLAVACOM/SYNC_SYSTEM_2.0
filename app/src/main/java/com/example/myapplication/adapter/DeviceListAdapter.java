@@ -12,30 +12,31 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.example.myapplication.AppConstants;
 import com.example.myapplication.R;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class BtAdapter extends ArrayAdapter<ListItem> {
+public class DeviceListAdapter extends ArrayAdapter<DeviceListItem> {
     public static final String DEF_ITEM_TYPE = "normal";
     public static final String TITLE_ITEM_TYPE = "tytle";
     public static final String DISCOVERY_ITEM_TYPE = "discovery";
-    private List<ListItem> mainList;
+    private List<DeviceListItem> mainList;
     private List<ViewHolder> viewHolderList;
     private SharedPreferences preferences;
-    private boolean isDiscoveryT;
+    private boolean scanProgress;
 
     class ViewHolder {
         TextView tvBtName;
         CheckBox checkBox;
     }
 
-    public BtAdapter(@NonNull Context context, int resource, List<ListItem> btList) {
+    public DeviceListAdapter(@NonNull Context context, int resource, List<DeviceListItem> btList) {
         super(context, resource, btList);
         mainList = btList;
         viewHolderList = new ArrayList<>();
-        preferences = context.getSharedPreferences(BtCONST.MY_PREF, context.MODE_PRIVATE);
+        preferences = context.getSharedPreferences(AppConstants.MY_PREF, context.MODE_PRIVATE);
     }
 
     @NonNull
@@ -56,18 +57,16 @@ public class BtAdapter extends ArrayAdapter<ListItem> {
 
     private void savePref(int pos) {
         SharedPreferences.Editor editor = preferences.edit();
-        editor.putString(BtCONST.MAC_KEY, mainList.get(pos).getBluetoothDevice().getAddress());
+        editor.putString(AppConstants.MAC_KEY, mainList.get(pos).getBluetoothDevice().getAddress());
         editor.apply();
     }
 
 
     private View defaultItem(View convertView, int position, ViewGroup parent) {
         ViewHolder viewHolder;
-
         boolean hasViewHolder = false;
-        if (convertView != null) hasViewHolder= (convertView.getTag() instanceof ViewHolder);
+        if (convertView != null) hasViewHolder = (convertView.getTag() instanceof ViewHolder);
         if (convertView == null || !hasViewHolder) {
-
             viewHolder = new ViewHolder();
             convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.bt_list_item, null, false);
             viewHolder.tvBtName = convertView.findViewById(R.id.tvBtName);
@@ -76,38 +75,43 @@ public class BtAdapter extends ArrayAdapter<ListItem> {
             viewHolderList.add(viewHolder);
 
         } else {
-            viewHolder= (ViewHolder) convertView.getTag();
+            viewHolder = (ViewHolder) convertView.getTag();
             viewHolder.checkBox.setChecked(false);
         }
-        if (mainList.get(position).getItemType().equals(BtAdapter.DISCOVERY_ITEM_TYPE)){
+        if (mainList.get(position).getItemType().equals(DeviceListAdapter.DISCOVERY_ITEM_TYPE)) {
             viewHolder.checkBox.setVisibility(View.GONE);
-            isDiscoveryT = true;
+            scanProgress = true;
         } else {
             viewHolder.checkBox.setVisibility(View.VISIBLE);
-            isDiscoveryT = false;
+            scanProgress = false;
         }
-        try { viewHolder.tvBtName.setText(mainList.get(position).getBluetoothDevice().getName());} catch (SecurityException e){}
+        try {
+            viewHolder.tvBtName.setText(mainList.get(position).getBluetoothDevice().getName());
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        }
         viewHolder.checkBox.setOnClickListener(view -> {
-            if (!isDiscoveryT){
-            for (ViewHolder holder : viewHolderList){
-                holder.checkBox.setChecked(false);
-            }
-            viewHolder.checkBox.setChecked(true);
-            savePref(position);
+            if (!scanProgress) {
+                for (ViewHolder holder : viewHolderList) {
+                    holder.checkBox.setChecked(false);
+                }
+                viewHolder.checkBox.setChecked(true);
+                savePref(position);
             }
         });
-        if(preferences.getString(BtCONST.MAC_KEY, "No bt selected").equals(mainList.get(position).getBluetoothDevice().getAddress())){
+        if (preferences.getString(AppConstants.MAC_KEY, "No bt selected")
+                .equals(mainList.get(position).getBluetoothDevice().getAddress())) {
             viewHolder.checkBox.setChecked(true);
         }
-        isDiscoveryT = false;
+        scanProgress = false;
         return convertView;
     }
 
-    private View titleItem(View convertView, ViewGroup parent){
+    private View titleItem(View convertView, ViewGroup parent) {
         boolean hasViewHolder = false;
         if (convertView != null) hasViewHolder = (convertView.getTag() instanceof ViewHolder);
-        if (convertView == null || hasViewHolder){
-            convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.bt_list_title_tem,null,false);
+        if (convertView == null || hasViewHolder) {
+            convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.bt_list_title_tem, null, false);
         }
         return convertView;
     }

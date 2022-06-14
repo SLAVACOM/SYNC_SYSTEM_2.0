@@ -5,9 +5,11 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.security.keystore.KeyGenParameterSpec;
@@ -17,7 +19,9 @@ import android.security.keystore.UserNotAuthenticatedException;
 import android.view.View;
 import android.widget.Button;
 
-import com.example.myapplication.DataBase.DataBaseHelper;
+import com.example.myapplication.domain.Event;
+import com.example.myapplication.domain.rest.LibApiVolley;
+import com.example.myapplication.sqlite.DataBaseHelper;
 
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
@@ -44,27 +48,31 @@ public class StartActivity extends AppCompatActivity {
     private static final int AUTHENTICATION_DURATION_SECONDS = 30;
     private DataBaseHelper dataBaseHelper;
     private String dataTime;
+    private LibApiVolley libApiVolley;
+    private SharedPreferences sharedPreferences;
+    private int user_id=0;
+
 
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState)  {
-
         ActionBar actionBar = getSupportActionBar();
         actionBar.hide();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
         dataBaseHelper = new DataBaseHelper(this);
         button = findViewById(R.id.start_bt);
+        libApiVolley = new LibApiVolley(this);
         keyguardManager = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
+
 
 
         if (!keyguardManager.isKeyguardSecure()) {
             Intent in = new Intent(this, MainActivity.class);
             startActivity(in);
-            dataBaseHelper.addDataBase("Successful login",getTime());
+            dataBaseHelper.addDataBase("Successful login",Time.getTime());
             finish();
-            AppStatus.pass_have = false;
             return;
         }
 
@@ -74,13 +82,16 @@ public class StartActivity extends AppCompatActivity {
                 if (tryEncrypt()==true){
                     Intent intent = new Intent(StartActivity.this, MainActivity.class);
                     startActivity(intent);
-                    dataBaseHelper.addDataBase("Successful login",getTime());
+                    libApiVolley.addEvent(new Event(user_id, "0",Time.getTime()));
+
+                    dataBaseHelper.addDataBase("Successful login",Time.getTime());
                     finish();
                 }
             }
         });
 
     }
+
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
@@ -150,18 +161,14 @@ public class StartActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 if (tryEncrypt()) {
                     Intent intent = new Intent(this, MainActivity.class);
-                    dataBaseHelper.addDataBase("Successful login",getTime());
+                    dataBaseHelper.addDataBase("Successful login",Time.getTime());
                     startActivity(intent);
                     finish();
                 }
             } else {
-                dataBaseHelper.addDataBase("Unsuccessful login",getTime());
+                dataBaseHelper.addDataBase("Unsuccessful login",Time.getTime());
             }
         }
-    }
-    private String getTime(){
-        dataTime = ( new SimpleDateFormat("yyyy.MM.dd HH:mm:ss")).format(Calendar.getInstance().getTime());
-        return dataTime;
     }
 
 }

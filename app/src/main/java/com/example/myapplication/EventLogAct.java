@@ -1,9 +1,6 @@
 package com.example.myapplication;
 
-import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.os.Bundle;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -13,9 +10,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.myapplication.DataBase.DataBaseHelper;
-import com.example.myapplication.DataBase.DbAdapter;
-import com.example.myapplication.adapter.BtCONST;
+import com.example.myapplication.sqlite.DataBaseHelper;
+import com.example.myapplication.adapter.EventListAdapter;
 
 import java.util.ArrayList;
 
@@ -25,7 +21,7 @@ public class EventLogAct extends AppCompatActivity {
     private RecyclerView recyclerView;
     private DataBaseHelper dataBaseHelper;
     private ArrayList<String> id, time, event;
-    private DbAdapter customAdapter;
+    private EventListAdapter customAdapter;
     private boolean ubdate = true;
 
     @Override
@@ -34,7 +30,7 @@ public class EventLogAct extends AppCompatActivity {
         setContentView(R.layout.activity_event_log);
 
         init();
-        customAdapter= new DbAdapter(EventLogAct.this, id,time,event );
+        customAdapter= new EventListAdapter(EventLogAct.this);
         recyclerView.setAdapter(customAdapter);
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setLayoutManager(new LinearLayoutManager(EventLogAct.this));
@@ -45,7 +41,6 @@ public class EventLogAct extends AppCompatActivity {
                     if (!recyclerView.canScrollVertically(1)){
                         if (ubdate) {
                             if (scrollcount > 0) {
-                                DBtoArraysUpdate();
                                 customAdapter.notifyDataSetChanged();
                                 scrollcount = 0;
                             } else {
@@ -82,62 +77,11 @@ public class EventLogAct extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         AppStatus.openStatus = true;
-        DBtoArrays();
-    }
-    private void DBtoArraysUpdate() {
-        Cursor cursor = dataBaseHelper.readAll();
-        cursor.moveToLast();
-        id.clear();
-        time.clear();
-        event.clear();
-        if (cursor.getCount()>size+30){
-            size+=50;
-            for (int i = 0;  i<size;i++){
-                id.add(cursor.getString(0));
-                time.add(cursor.getString(2));
-                event.add(cursor.getString(3));
-                cursor.move(-1);
-            }
-        }  else {
-            for (int i = 0;  i<cursor.getCount();i++){
-                id.add(cursor.getString(0));
-                time.add(cursor.getString(2));
-                event.add(cursor.getString(3));
-                cursor.move(-1);
-                size++;
-            }
-            ubdate = false;
-            }
+        customAdapter.notifyDataSetChanged();
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        size=0;
-    }
 
-    private void DBtoArrays() {
-        Cursor cursor = dataBaseHelper.readAll();
-        cursor.moveToLast();
-        System.out.println(cursor.getCount());
-        if (cursor.getCount()>50){
-            for (int i = 0;  i<50;i++){
-                id.add(cursor.getString(0));
-                time.add(cursor.getString(2));
-                event.add(cursor.getString(3));
-                cursor.move(-1);
-                size++;
-            }
-        }  else {
-            for (int i = 0;  i<cursor.getCount();i++){
-                id.add(cursor.getString(0));
-                time.add(cursor.getString(2));
-                event.add(cursor.getString(3));
-                cursor.move(-1);
-                size++;
-            }
-            ubdate = false;
-            Toast.makeText(this, "Больше нет данных", Toast.LENGTH_SHORT).show();
-        }
+
+    public void update() {
     }
 }
