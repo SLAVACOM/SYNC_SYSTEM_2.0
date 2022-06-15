@@ -10,19 +10,23 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.myapplication.domain.Event;
+import com.example.myapplication.domain.rest.LibApiVolley;
 import com.example.myapplication.sqlite.DataBaseHelper;
 import com.example.myapplication.adapter.EventListAdapter;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class EventLogAct extends AppCompatActivity {
+    public static final int perPage = 50;
     private MenuItem item;
-    private static int size = 0, scrollcount=0;
+    private static int size = perPage, scrollcount = 0;
     private RecyclerView recyclerView;
     private DataBaseHelper dataBaseHelper;
-    private ArrayList<String> id, time, event;
+    private static List<Event> eventList = new ArrayList<>();
     private EventListAdapter customAdapter;
-    private boolean ubdate = true;
+    private boolean hasEvents = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +34,7 @@ public class EventLogAct extends AppCompatActivity {
         setContentView(R.layout.activity_event_log);
 
         init();
-        customAdapter= new EventListAdapter(EventLogAct.this);
+        customAdapter = new EventListAdapter(EventLogAct.this, eventList);
         recyclerView.setAdapter(customAdapter);
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setLayoutManager(new LinearLayoutManager(EventLogAct.this));
@@ -38,50 +42,64 @@ public class EventLogAct extends AppCompatActivity {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-                    if (!recyclerView.canScrollVertically(1)){
-                        if (ubdate) {
-                            if (scrollcount > 0) {
-                                customAdapter.notifyDataSetChanged();
-                                scrollcount = 0;
-                            } else {
-                                scrollcount++;
-                                Toast.makeText(EventLogAct.this, "Потяни ещё раз для добавления", Toast.LENGTH_SHORT).show();
-                            }
-                        } else {
-                            Toast.makeText(EventLogAct.this, "Больше данных нет", Toast.LENGTH_SHORT).show();
+                if (!recyclerView.canScrollVertically(1)) {
+                    if (hasEvents) {
+                        if (scrollcount++ > 0) {
+                            size += perPage;
+                            addNextEvents();
+                            scrollcount = 0;
+                            return;
                         }
-                    } }
+                        Toast.makeText(EventLogAct.this, "Потяни ещё раз для добавления", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(EventLogAct.this, "Больше данных нет", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
 
         });
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId()== android.R.id.home){
+        if (item.getItemId() == android.R.id.home) {
             finish();
         }
         return super.onOptionsItemSelected(item);
     }
-    private  void  init(){
+
+    public void updateEvents() {
+        customAdapter.notifyDataSetChanged();
+    }
+
+    private void init() {
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         dataBaseHelper = new DataBaseHelper(EventLogAct.this);
         recyclerView = findViewById(R.id.recycler);
-        id = new ArrayList<>();
-        time = new ArrayList<>();
-        event = new ArrayList<>();
+
     }
+
 
     @Override
     protected void onStart() {
         super.onStart();
-        AppStatus.openStatus = true;
+        eventList.clear();
+        addNextEvents();
+        new LibApiVolley(this).fillEvent();
         customAdapter.notifyDataSetChanged();
     }
 
-
-
-    public void update() {
+    private void addNextEvents() {
+        int current = eventList.size();
+        int all = NoDb.ALL_EVENT_LIST.size();
+        for (int i = current; i < Math.min(current + perPage - 1, all - 1); i++) {
+            eventList.add(NoDb.ALL_EVENT_LIST.get(all - i - 1));
+        }
+        updateEvents();
     }
+
+
 }
+

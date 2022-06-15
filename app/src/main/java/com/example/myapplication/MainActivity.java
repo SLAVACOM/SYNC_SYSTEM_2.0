@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
                 this.view = view;
                 this.motionEvent = motionEvent;
 
-                if (AppStatus.connectStatus==true){
+                if (AppStatus.connectStatus){
                     if (motionEvent.getAction() == MotionEvent.ACTION_DOWN){
                         switch (view.getId()) {
                             case (R.id.ButA):

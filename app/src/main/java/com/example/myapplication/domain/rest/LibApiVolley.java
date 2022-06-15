@@ -12,6 +12,7 @@ import com.android.volley.Response;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.myapplication.EventLogAct;
 import com.example.myapplication.domain.Event;
 import com.example.myapplication.domain.Mapper.EventMapper;
 import com.example.myapplication.NoDb;
@@ -28,8 +29,9 @@ import java.util.Map;
 public class LibApiVolley implements LibApi {
     public static final String API_TEST = "API_TEST";
     private final Context context;
-    public static final String BASE_URL = "http://192.168.1.64:8090";
+    public static final String BASE_URL = "https://slavacomm.herokuapp.com";
     private Response.ErrorListener errorListener;
+    private final int USER_ID= 0;
 
     public LibApiVolley(Context context) {
         this.context = context;
@@ -45,15 +47,18 @@ public class LibApiVolley implements LibApi {
             @Override
             public void onResponse(JSONArray response) {
                 try {
-                    NoDb.EVENT_LIST.clear();
+                    NoDb.ALL_EVENT_LIST.clear();
                     for (int i = 0; i < response.length(); i++) {
 
                         JSONObject jsonObject = response.getJSONObject(i);
                         Event event = EventMapper.eventFromJson(jsonObject);
-                        NoDb.EVENT_LIST.add(event);
+                        if (event.getUser_id()==USER_ID){
+                        NoDb.ALL_EVENT_LIST.add(event);}
                     }
-                    Log.d(API_TEST, NoDb.EVENT_LIST.toString());
-
+                    if (context instanceof EventLogAct) {
+                        ((EventLogAct)context).updateEvents();
+                    }
+                    Log.d(API_TEST, NoDb.ALL_EVENT_LIST.toString());
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -75,9 +80,9 @@ public class LibApiVolley implements LibApi {
                     for (int i = 0; i < response.length(); i++) {
                         JSONObject jsonObject = response.getJSONObject(i);
                         User user = UserMapper.eventFromJson(jsonObject);
-                        NoDb.USER_LIST.add(user);
+                        NoDb.ALL_USER_LIST.add(user);
                     }
-                    Log.d(API_TEST, NoDb.USER_LIST.toString());
+                    Log.d(API_TEST, NoDb.ALL_USER_LIST.toString());
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -99,8 +104,6 @@ public class LibApiVolley implements LibApi {
                 try {
                     JSONObject jsonObject = response.getJSONObject(0);
                     User user = UserMapper.eventFromJson(jsonObject);
-                    NoDb.user = user;
-                    Log.d(API_TEST, NoDb.user.toString());
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

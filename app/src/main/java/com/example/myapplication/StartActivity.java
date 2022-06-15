@@ -47,10 +47,7 @@ public class StartActivity extends AppCompatActivity {
     public static final String KEY_NAME = "KEY_NAME";
     private static final int AUTHENTICATION_DURATION_SECONDS = 30;
     private DataBaseHelper dataBaseHelper;
-    private String dataTime;
     private LibApiVolley libApiVolley;
-    private SharedPreferences sharedPreferences;
-    private int user_id=0;
 
 
 
@@ -66,12 +63,9 @@ public class StartActivity extends AppCompatActivity {
         libApiVolley = new LibApiVolley(this);
         keyguardManager = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
 
-
-
         if (!keyguardManager.isKeyguardSecure()) {
             Intent in = new Intent(this, MainActivity.class);
             startActivity(in);
-            dataBaseHelper.addDataBase("Successful login",Time.getTime());
             finish();
             return;
         }
@@ -82,8 +76,7 @@ public class StartActivity extends AppCompatActivity {
                 if (tryEncrypt()==true){
                     Intent intent = new Intent(StartActivity.this, MainActivity.class);
                     startActivity(intent);
-                    libApiVolley.addEvent(new Event(user_id, "0",Time.getTime()));
-
+                    libApiVolley.addEvent(new Event(0, "4",Time.getTime()));
                     dataBaseHelper.addDataBase("Successful login",Time.getTime());
                     finish();
                 }
@@ -113,6 +106,8 @@ public class StartActivity extends AppCompatActivity {
             cipher.init(Cipher.ENCRYPT_MODE, secretKey);
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
+            libApiVolley.addEvent(new Event(0, "4",Time.getTime()));
+
             return true;
         } catch (UserNotAuthenticatedException e) {
             showAuthenticationScreen();
@@ -166,6 +161,7 @@ public class StartActivity extends AppCompatActivity {
                     finish();
                 }
             } else {
+                libApiVolley.addEvent(new Event(0, "5",Time.getTime()));
                 dataBaseHelper.addDataBase("Unsuccessful login",Time.getTime());
             }
         }

@@ -18,10 +18,9 @@ import java.util.List;
 public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.MyViewHolder> {
     private Context context;
     private List<Event> list;
-
-    public EventListAdapter(Context context) {
+    public EventListAdapter(Context context, List<Event> list) {
         this.context = context;
-        list = NoDb.EVENT_LIST;
+        this.list = list;
     }
 
     @NonNull
@@ -35,7 +34,7 @@ public class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.MyVi
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         Event event = list.get(position);
-        holder.id.setText(String.valueOf(event.getUser_id()));
+        holder.id.setText(String.valueOf(position+1));
         holder.time.setText(String.valueOf(event.getTime()));
         switch (event.getEvent()) {
             case "0":
