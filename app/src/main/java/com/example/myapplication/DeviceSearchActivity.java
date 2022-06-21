@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -48,7 +49,7 @@ public class DeviceSearchActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bt2);
-        getBtPermission();
+        getBluetoothPermission();
         init();
 
     }
@@ -94,8 +95,13 @@ public class DeviceSearchActivity extends AppCompatActivity {
             list.add(itemTytle);
             deviceListAdapter.notifyDataSetChanged();
             try {
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) == PackageManager.PERMISSION_DENIED) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH_SCAN}, 2);
+                    }
+                }
                 bluetoothAdapter.startDiscovery();
-            } catch (SecurityException e) {
+            }catch (Exception e ) {
                 e.printStackTrace();
             }
             isDiscovery = true;
@@ -137,20 +143,25 @@ public class DeviceSearchActivity extends AppCompatActivity {
 
 
     private void getPairedDevices() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-          @SuppressLint("MissingPermission") Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
-            if (pairedDevices.size() > 0) {
-                list.clear();
-                for (BluetoothDevice device : pairedDevices) {
-                    DeviceListItem item = new DeviceListItem();
-                    item.setBluetoothDevice(device);
-                    list.add(item);
-                }
-                deviceListAdapter.notifyDataSetChanged();
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_DENIED) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH_CONNECT}, 2);
+                return;
             }
         }
-
+        Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
+        if (pairedDevices.size() > 0) {
+            list.clear();
+            for (BluetoothDevice device : pairedDevices) {
+                DeviceListItem item = new DeviceListItem();
+                item.setBluetoothDevice(device);
+                list.add(item);
+            }
+            deviceListAdapter.notifyDataSetChanged();
+            }
     }
+
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -165,7 +176,7 @@ public class DeviceSearchActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
-    private void getBtPermission() {
+    private void getBluetoothPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{
                     Manifest.permission.ACCESS_FINE_LOCATION
